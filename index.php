@@ -10,7 +10,7 @@ class API {
 
         $db = new Connect;
 
-        // Modify the SQL query to format utc_time as datetime
+        // Modify the SQL query to format utc_time
         $sql = 'SELECT slack_name, DAYNAME(current_day) AS day_name, CONCAT(current_day, " ", utc_time) AS datetime, track, github_file_url, github_repo_url, status_code FROM users WHERE 1=1';
 
         if ($slackName !== null) {
@@ -36,18 +36,18 @@ class API {
         $data->execute();
 
         while($OutputData = $data->fetch(PDO::FETCH_ASSOC)){
-            // Create a new associative array with 'utc_time' key
+            // Create an associative array with the desired order
             $outputDataFormatted = array(
                 'slack_name' => $OutputData['slack_name'],
                 'day_name' => $OutputData['day_name'],
-                'utc_time' => $OutputData['datetime'], // Rename the key
+                'utc_time' => $OutputData['datetime'] . "Z",
                 'track' => $OutputData['track'],
                 'github_file_url' => $OutputData['github_file_url'],
                 'github_repo_url' => $OutputData['github_repo_url'],
                 'status_code' => $OutputData['status_code']   
             );
 
-            echo json_encode($outputDataFormatted) . PHP_EOL;
+            echo json_encode($outputDataFormatted, JSON_PRETTY_PRINT) . PHP_EOL;
         }
     }
 }
