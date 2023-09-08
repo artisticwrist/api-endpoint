@@ -36,7 +36,18 @@ class API {
         $data->execute();
 
         while($OutputData = $data->fetch(PDO::FETCH_ASSOC)){
-            echo json_encode($OutputData) . PHP_EOL;
+            // Create a new associative array with 'utc_time' key
+            $outputDataFormatted = array(
+                'slack_name' => $OutputData['slack_name'],
+                'day_name' => $OutputData['day_name'],
+                'utc_time' => $OutputData['datetime'], // Rename the key
+                'track' => $OutputData['track'],
+                'github_file_url' => $OutputData['github_file_url'],
+                'github_repo_url' => $OutputData['github_repo_url'],
+                'status_code' => $OutputData['status_code']   
+            );
+
+            echo json_encode($outputDataFormatted) . PHP_EOL;
         }
     }
 }
