@@ -1,58 +1,34 @@
 <?php
 
-require_once __DIR__ . '/config.php';
+$slackName = isset($_GET['slack_name']) ? $_GET['slack_name'] : "Joseph George";
+$currentDay = date('l');
+$utcTime = gmdate('Y-m-d\TH:i:s\Z');
+$track = isset($_GET['track']) ? $_GET['track'] : "backend";
+$githubFileUrl = isset($_GET['github_file_url']) ? $_GET['github_file_url'] : "https://github.com/artisticwrist/api-endpoint/blob/main/index.php";
+$githubRepoUrl = isset($_GET['github_repo_url']) ? $_GET['github_repo_url'] : "https://github.com/artisticwrist/api-endpoint";
+$statusCode = 200;
 
-class API {
-    function Select(){
-      
-        $slackName = isset($_GET['slack_name']) ? $_GET['slack_name'] : null;
-        $track = isset($_GET['track']) ? $_GET['track'] : null;
 
-        $db = new Connect;
+$currentTime = strtotime(gmdate('Y-m-d H:i:s'));
+$twoHoursAgo = strtotime('-2 hours');
+$twoHoursFuture = strtotime('+2 hours');
 
-        // Modify the SQL query to format utc_time
-        $sql = 'SELECT slack_name, DAYNAME(current_day) AS day_name, CONCAT(current_day, " ", utc_time) AS datetime, track, github_file_url, github_repo_url, status_code FROM users WHERE 1=1';
-
-        if ($slackName !== null) {
-            $sql .= " AND slack_name = :slackName";
-        }
-
-        if ($track !== null) {
-            $sql .= " AND track = :track";
-        }
-
-        $sql .= ' ORDER BY slack_name';
-
-        $data = $db->prepare($sql);
-
-        if ($slackName !== null) {
-            $data->bindParam(':slackName', $slackName);
-        }
-
-        if ($track !== null) {
-            $data->bindParam(':track', $track);
-        }
-
-        $data->execute();
-
-        while($OutputData = $data->fetch(PDO::FETCH_ASSOC)){
-            // Create an associative array with the desired order
-            $outputDataFormatted = array(
-                'slack_name' => $OutputData['slack_name'],
-                'day_name' => $OutputData['day_name'],
-                'utc_time' => $OutputData['datetime'] . "Z",
-                'track' => $OutputData['track'],
-                'github_file_url' => $OutputData['github_file_url'],
-                'github_repo_url' => $OutputData['github_repo_url'],
-                'status_code' => $OutputData['status_code']   
-            );
-
-            echo json_encode($outputDataFormatted, JSON_PRETTY_PRINT) . PHP_EOL;
-        }
-    }
+if ($currentTime < $twoHoursAgo || $currentTime > $twoHoursFuture) {
+   http_response_code(400); 
+   echo json_encode(['error' => 'UTC time is not within +/-2 hours']);
+   exit;
 }
 
-$API = new API;
-header('Content-type: application/json');
-$API->Select();
-?>
+
+$response = [
+   'slack_name' => $slackName,
+   'current_day' => $currentDay,
+   'utc_time' => $utcTime,
+   'track' => $track,
+   'github_file_url' => $githubFileUrl,
+   'github_repo_url' => $githubRepoUrl,
+   'status_code' => $statusCode
+];
+
+header('Content-Type: application/json');
+echo json_encode($response);
