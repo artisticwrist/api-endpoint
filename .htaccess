@@ -1,2 +1,2 @@
 RewriteEngine On
-RewriteRule ^api$ endpoint.php [QSA,NC,L]
+RewriteRule ^api$ index.php [QSA,NC,L]
