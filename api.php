@@ -51,7 +51,7 @@ $response = [
     'current_day' => $current_day,
     'utc_time' => $current_utc_time,
     'track' => $track,
-    'github_file_url' => 'https://github.com/artisticwrist/api-endpoint/blob/main/index.php',
+    'github_file_url' => 'https://github.com/artisticwrist/api-endpoint/blob/main/api.php',
     'github_repo_url' => 'https://github.com/artisticwrist/api-endpoint/',
     'status_code' => 200
 ];
